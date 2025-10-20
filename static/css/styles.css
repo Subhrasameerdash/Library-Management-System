@@ -1,0 +1,32 @@
+:root {
+  --brand-primary: #0d6efd;
+  --brand-accent: #198754;
+  --brand-muted: #f8f9fa;
+}
+
+body {
+  background-color: var(--brand-muted);
+}
+
+.navbar-brand {
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.card-hover:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  transition: all 0.2s ease-in-out;
+}
+
+.table-responsive {
+  background-color: #fff;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+@media (max-width: 575.98px) {
+  .table-responsive {
+    padding: 0.5rem;
+  }
+}

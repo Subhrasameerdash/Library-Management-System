@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-body text-center">
+        <h3 class="h5">{{ request.user.get_full_name|default:request.user.username }}</h3>
+        <p class="text-muted mb-1">Role: {{ request.user.get_role_display }}</p>
+        {% if profile %}
+        <p class="text-muted">Member ID: {{ profile.membership_id }}</p>
+        {% endif %}
+        <a href="{% url 'accounts:profile-edit' %}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card mb-3">
+      <div class="card-header">Contact Information</div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Email</dt>
+          <dd class="col-sm-8">{{ request.user.email|default:'Not provided' }}</dd>
+          <dt class="col-sm-4">Phone</dt>
+          <dd class="col-sm-8">{{ profile.phone_number|default:'Not provided' }}</dd>
+          <dt class="col-sm-4">Address</dt>
+          <dd class="col-sm-8">{{ profile.address|default:'Not provided' }}</dd>
+          <dt class="col-sm-4">City</dt>
+          <dd class="col-sm-8">{{ profile.city|default:'Not provided' }}</dd>
+        </dl>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">Preferences</div>
+      <div class="card-body">
+        {% if profile and profile.preferred_categories.all %}
+  <div class="d-flex flex-wrap gap-2">{% for category in profile.preferred_categories.all %}<span class="badge bg-secondary">{{ category.name }}</span>{% empty %}<span class="text-muted">No preferences set.</span>{% endfor %}</div>
+        {% else %}
+        <p class="text-muted mb-0">No preferences set.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

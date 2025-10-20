@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Account Overview{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Membership</h5>
+        <p class="mb-1">Name: {{ request.user.get_full_name|default:request.user.username }}</p>
+        {% if profile %}
+        <p class="mb-1">Membership ID: {{ profile.membership_id }}</p>
+        <p class="mb-0">Joined: {{ profile.joined_at|date:"M d, Y" }}</p>
+        {% else %}
+        <p class="text-muted mb-0">Complete your profile details.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Recent Loans</span>
+        <a href="{% url 'circulation:loan-list' %}" class="btn btn-sm btn-outline-secondary">View all</a>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Book</th>
+                <th>Issued</th>
+                <th>Due</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for loan in loans %}
+              <tr>
+                <td>{{ loan.copy.book.title }}</td>
+                <td>{{ loan.issued_at|date:"M d, Y" }}</td>
+                <td>{{ loan.due_at|date:"M d, Y" }}</td>
+                <td><span class="badge bg-{% if loan.status == 'OVERDUE' %}danger{% elif loan.status == 'RETURNED' %}success{% else %}primary{% endif %}">{{ loan.get_status_display }}</span></td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4" class="text-muted text-center">No recent loans.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Reservations</span>
+        <a href="{% url 'circulation:my-reservations' %}" class="btn btn-sm btn-outline-secondary">Manage</a>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Book</th>
+                <th>Status</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for reservation in reservations %}
+              <tr>
+                <td>{{ reservation.book.title }}</td>
+                <td>{{ reservation.get_status_display }}</td>
+                <td>{{ reservation.created_at|date:"M d, Y" }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="3" class="text-muted text-center">No reservations yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

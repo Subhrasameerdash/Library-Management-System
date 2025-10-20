@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}My Reservations{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">My Reservations</h1>
+<div class="table-responsive">
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
+        <th>Book</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Expires</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for reservation in reservations %}
+      <tr>
+        <td>{{ reservation.book.title }}</td>
+        <td>{{ reservation.get_status_display }}</td>
+        <td>{{ reservation.created_at|date:"M d, Y" }}</td>
+        <td>{{ reservation.expires_at|date:"M d, Y"|default:'-' }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="text-center text-muted">No reservations.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

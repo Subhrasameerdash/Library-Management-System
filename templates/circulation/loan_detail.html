@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Loan Details{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header">Loan Summary</div>
+      <div class="card-body">
+        <p><strong>Book:</strong> {{ object.copy.book.title }}</p>
+        <p><strong>Borrower:</strong> {{ object.borrower.username }}</p>
+        <p><strong>Issued:</strong> {{ object.issued_at|date:"M d, Y" }}</p>
+        <p><strong>Due:</strong> {{ object.due_at|date:"M d, Y" }}</p>
+        <p><strong>Status:</strong> {{ object.get_status_display }}</p>
+        <p><strong>Fine Accrued:</strong> {{ object.fine_accrued }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header">Actions</div>
+      <div class="card-body">
+        {% if request.user.is_admin or request.user.is_librarian %}
+        <a href="{% url 'circulation:loan-return' object.pk %}" class="btn btn-success mb-2">Mark as Returned</a>
+        {% endif %}
+        <a href="{% url 'circulation:fine-list' %}" class="btn btn-outline-secondary">View Fines</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

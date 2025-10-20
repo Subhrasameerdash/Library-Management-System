@@ -1,0 +1,48 @@
+{% spaceless %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+  <a class="navbar-brand" href="{% url 'reports:dashboard' %}">Library</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'catalog:book-list' %}">Catalog</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'circulation:loan-list' %}">Loans</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'reports:dashboard' %}">Reports</a>
+        </li>
+      </ul>
+      {% if request.user.is_authenticated %}
+      {% spaceless %}
+      <ul class="navbar-nav mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ request.user.get_full_name|default:request.user.username }}</a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="{% url 'accounts:overview' %}">My Dashboard</a></li>
+            <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a></li>
+            {% if request.user.is_admin or request.user.is_librarian %}
+            <li><a class="dropdown-item" href="{% url 'accounts:user-list' %}">Manage Users</a></li>
+            {% endif %}
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+      {% endspaceless %}
+      {% else %}
+      {% spaceless %}
+      <ul class="navbar-nav mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:register' %}">Register</a></li>
+      </ul>
+      {% endspaceless %}
+      {% endif %}
+    </div>
+  </div>
+</nav>
+{% endspaceless %}

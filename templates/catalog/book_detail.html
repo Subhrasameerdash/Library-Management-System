@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}{{ object.title }}{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card">
+      {% if object.cover_image %}
+      <img src="{{ object.cover_image.url }}" class="card-img-top" alt="{{ object.title }} cover">
+      {% endif %}
+      <div class="card-body">
+        <h2 class="h4">{{ object.title }}</h2>
+        <p class="mb-1">Author: {{ object.author }}</p>
+        <p class="mb-1">ISBN: {{ object.isbn }}</p>
+        <p class="mb-1">Category: {{ object.category.name }}</p>
+        <p class="mb-1">Published: {{ object.publication_date|date:"M d, Y" }}</p>
+        <p class="mb-0">Copies Available: {{ object.available_copies }} / {{ object.total_copies }}</p>
+      </div>
+    </div>
+    {% if request.user.is_authenticated %}
+    <div class="d-grid gap-2 mt-3">
+      <a href="{% url 'catalog:toggle-favorite' object.pk %}" class="btn btn-outline-secondary">Toggle Category Preference</a>
+      {% if request.user.is_admin or request.user.is_librarian %}
+      <a href="{% url 'catalog:book-edit' object.pk %}" class="btn btn-primary">Edit Book</a>
+      <a href="{% url 'catalog:book-delete' object.pk %}" class="btn btn-danger">Delete Book</a>
+      <a href="{% url 'catalog:bookcopy-add' object.pk %}" class="btn btn-outline-primary">Add Copy</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+  <div class="col-md-8">
+    <div class="card mb-3">
+      <div class="card-header">Description</div>
+      <div class="card-body">
+        <p class="mb-0">{{ object.description|default:'No description provided.' }}</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Copies</span>
+        {% if request.user.is_admin or request.user.is_librarian %}
+        <small class="text-muted">Manage inventory</small>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Barcode</th>
+                <th>Status</th>
+                <th>Location</th>
+                <th>Acquired</th>
+                {% if request.user.is_admin or request.user.is_librarian %}<th>Actions</th>{% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for copy in object.copies.all %}
+              <tr>
+                <td>{{ copy.barcode }}</td>
+                <td>{{ copy.get_status_display }}</td>
+                <td>{{ copy.location|default:'-' }}</td>
+                <td>{{ copy.acquired_at|date:"M d, Y" }}</td>
+                {% if request.user.is_admin or request.user.is_librarian %}
+                <td>
+                  <div class="btn-group">
+                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'catalog:bookcopy-edit' copy.pk %}">Edit</a>
+                    <a class="btn btn-sm btn-outline-danger" href="{% url 'catalog:bookcopy-delete' copy.pk %}">Delete</a>
+                  </div>
+                </td>
+                {% endif %}
+              </tr>
+              {% empty %}
+              <tr><td colspan="5" class="text-muted text-center">No copies available.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

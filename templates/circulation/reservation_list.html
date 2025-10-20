@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Reservations{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Reservations</h1>
+  <a href="{% url 'circulation:reservation-create' %}" class="btn btn-primary">Add Reservation</a>
+</div>
+<form class="row g-2 mb-3">
+  <div class="col-md-3">
+    <label class="form-label visually-hidden" for="reservation-status">Status</label>
+    <select name="status" id="reservation-status" class="form-select">
+      <option value="">All statuses</option>
+      {% for value, label in view.model.Status.choices %}
+      <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-outline-secondary w-100">Filter</button>
+  </div>
+</form>
+<div class="table-responsive">
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
+        <th>Book</th>
+        <th>Member</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Position</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for reservation in object_list %}
+      <tr>
+        <td>{{ reservation.book.title }}</td>
+        <td>{{ reservation.member.username }}</td>
+        <td>{{ reservation.get_status_display }}</td>
+        <td>{{ reservation.created_at|date:"M d, Y" }}</td>
+        <td>{{ reservation.position }}</td>
+        <td class="text-end">
+          <div class="btn-group">
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'circulation:reservation-edit' reservation.pk %}">Edit</a>
+            <form method="post" action="{% url 'circulation:reservation-action' reservation.pk 'notify' %}" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-sm btn-outline-secondary">Notify</button></form>
+            <form method="post" action="{% url 'circulation:reservation-action' reservation.pk 'fulfill' %}" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-sm btn-outline-success">Fulfill</button></form>
+            <form method="post" action="{% url 'circulation:reservation-action' reservation.pk 'cancel' %}" class="d-inline">{% csrf_token %}<button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button></form>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center text-muted">No reservations.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "includes/pagination.html" with page_obj=page_obj %}
+{% endblock %}

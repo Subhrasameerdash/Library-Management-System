@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1 class="h4 mb-4">Library Dashboard</h1>
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-lg-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title">Total Books</h5>
+        <p class="display-6">{{ total_books }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title">Members</h5>
+        <p class="display-6">{{ total_members }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title">Active Loans</h5>
+        <p class="display-6">{{ active_loans }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title">Overdue</h5>
+        <p class="display-6 text-danger">{{ overdue_loans }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Recent Loans</span>
+        <a href="{% url 'circulation:loan-list' %}" class="btn btn-sm btn-outline-secondary">All loans</a>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Book</th>
+                <th>Member</th>
+                <th>Issued</th>
+                <th>Due</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for loan in recent_loans %}
+              <tr>
+                <td>{{ loan.copy.book.title }}</td>
+                <td>{{ loan.borrower.username }}</td>
+                <td>{{ loan.issued_at|date:"M d" }}</td>
+                <td>{{ loan.due_at|date:"M d" }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4" class="text-center text-muted">No recent loans.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card mb-3">
+      <div class="card-header">Top Categories</div>
+      <div class="card-body">
+        <div class="d-flex flex-column gap-2">
+          {% for category in top_categories %}
+          <div class="d-flex justify-content-between align-items-center">
+            <span>{{ category.category__name }}</span>
+            <span class="badge bg-primary">{{ category.total }}</span>
+          </div>
+          {% empty %}
+          <span class="text-muted">No data yet.</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Quick Export</h5>
+        <p class="card-text">Download the latest loan data as CSV for further analysis.</p>
+        <a href="{% url 'reports:loan-export' %}" class="btn btn-outline-primary">Export Loans</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

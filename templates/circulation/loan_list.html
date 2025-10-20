@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Loans{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Loans</h1>
+  {% if request.user.is_admin or request.user.is_librarian %}
+  <a href="{% url 'circulation:loan-create' %}" class="btn btn-primary">Issue Loan</a>
+  {% endif %}
+</div>
+<form class="row g-2 mb-3">
+  <div class="col-md-3">
+    <label class="form-label visually-hidden" for="loan-search">Search loans</label>
+    <input type="search" id="loan-search" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Search by book or borrower">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label visually-hidden" for="status-filter">Status</label>
+    <select name="status" id="status-filter" class="form-select">
+      <option value="">All statuses</option>
+      {% for value, label in view.model.Status.choices %}
+      <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-outline-secondary w-100">Filter</button>
+  </div>
+</form>
+<div class="table-responsive">
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
+        <th>Book</th>
+        <th>Borrower</th>
+        <th>Issued</th>
+        <th>Due</th>
+        <th>Status</th>
+        <th>Fine</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for loan in object_list %}
+      <tr>
+        <td>{{ loan.copy.book.title }}</td>
+        <td>{{ loan.borrower.username }}</td>
+        <td>{{ loan.issued_at|date:"M d, Y" }}</td>
+        <td>{{ loan.due_at|date:"M d, Y" }}</td>
+        <td><span class="badge bg-{% if loan.status == 'OVERDUE' %}danger{% elif loan.status == 'RETURNED' %}success{% else %}primary{% endif %}">{{ loan.get_status_display }}</span></td>
+        <td>{{ loan.fine_accrued }}</td>
+        <td class="text-end">
+          <a href="{% url 'circulation:loan-detail' loan.pk %}" class="btn btn-sm btn-outline-primary">Details</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="text-center text-muted">No loans found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "includes/pagination.html" with page_obj=page_obj %}
+{% endblock %}

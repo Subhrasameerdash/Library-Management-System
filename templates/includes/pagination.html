@@ -1,0 +1,23 @@
+{% if page_obj.has_other_pages %}
+<nav aria-label="Pagination">
+  <div class="d-flex flex-wrap justify-content-center gap-2">
+    {% if page_obj.has_previous %}
+    <a class="btn btn-outline-secondary" href="?page={{ page_obj.previous_page_number }}" role="button">Previous</a>
+    {% else %}
+    <span class="btn btn-outline-secondary disabled" aria-disabled="true">Previous</span>
+    {% endif %}
+    {% for page in page_obj.paginator.page_range %}
+    {% if page == page_obj.number %}
+    <span class="btn btn-primary disabled" aria-current="page">{{ page }}</span>
+    {% else %}
+    <a class="btn btn-outline-secondary" href="?page={{ page }}" role="button">{{ page }}</a>
+    {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+    <a class="btn btn-outline-secondary" href="?page={{ page_obj.next_page_number }}" role="button">Next</a>
+    {% else %}
+    <span class="btn btn-outline-secondary disabled" aria-disabled="true">Next</span>
+    {% endif %}
+  </div>
+</nav>
+{% endif %}

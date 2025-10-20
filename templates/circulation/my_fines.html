@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}My Fines{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">My Fines</h1>
+<p class="lead">Outstanding: <strong>{{ outstanding_total }}</strong></p>
+<div class="table-responsive">
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
+        <th>Book</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Issued</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for fine in fines %}
+      <tr>
+        <td>{{ fine.loan.copy.book.title }}</td>
+        <td>{{ fine.amount }}</td>
+        <td>{{ fine.is_paid|yesno:"Paid,Outstanding" }}</td>
+        <td>{{ fine.issued_at|date:"M d, Y" }}</td>
+        <td class="text-end">
+          {% if not fine.is_paid %}
+          <a class="btn btn-sm btn-success" href="{% url 'circulation:fine-pay' fine.pk %}">Mark Paid</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" class="text-center text-muted">No fines.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
