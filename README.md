@@ -56,3 +56,7 @@ You can adjust counts via flags such as `--books`, `--loans`, `--members`, and `
 - Add automated tests for seeding and permissions.
 - Extend the reporting dashboard with visualizations.
 - Integrate notification sending (email/SMS) backends.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
